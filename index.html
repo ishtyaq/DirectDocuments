@@ -1,0 +1,96 @@
+<html>
+  <head>
+    <title>Passport Detector</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    
+
+    <script src="https://unpkg.com/ml5@0.4.3/dist/ml5.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.1.9/lib/p5.js"></script>
+    <script src="sketch.js"></script>
+    
+    <meta name="description" content="Use the power of Machine Learning to diagnose TB from chest x-rays.">
+
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+		<style>
+			body {
+				min-height: 75rem;
+				padding-top: 4.5rem;
+			}
+
+			.bd-placeholder-img {
+				font-size: 1.125rem;
+				text-anchor: middle;
+				-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+			}
+      #dropzone {
+        padding: 24px;
+        border-style: dashed;
+        font-size: 36pt;
+        width:100%;
+      }
+			@media (min-width: 768px) {
+				.bd-placeholder-img-lg {
+					font-size: 3.5rem;
+				}
+			}
+		</style>
+</head>
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+			<a class="navbar-brand" href="/index.html">Passport Detector</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarCollapse">
+				<ul class="navbar-nav mr-auto">
+				<li class="nav-item">
+					<a class="nav-link" href="/index.html">Home <span class="sr-only">(current)</span></a>
+				</li>
+			</div>
+		</nav>
+		<main role="main" class="container mt-5">
+			<div class="row">
+				<div class="col-12">
+					<div class="progress progress-bar progress-bar-striped progress-bar-animated mb-2">Loading Model</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6">
+          <p id="dropzone">
+              Drag your file here
+          </p>
+					<!-- <input id="image-selector" =class="form-control border-0" type="file"> -->
+				</div>
+				<div class="col-6">
+					<button id="predict-button" onclick="predictResult()" class="btn btn-primary ">Predict</button>
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class="col-6">
+					<h2 class="ml-3">Image</h2>
+					<img id="selected-image" class="ml-3" width="250" alt=""> 
+				</div>
+				<div class="col-6">
+					<h2 class="ml-3">Predictions</h2>
+					<ol id="prediction-list"></ol>
+				</div>
+      </div>
+     
+      <script>
+        // Your code will go here
+        // open up your console - if everything loaded properly you should see 0.4.1
+        console.log('ml5 version:', ml5.version);
+      </script>
+		</main>
+   
+  </body>
+</html>
