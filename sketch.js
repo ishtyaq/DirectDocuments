@@ -11,8 +11,8 @@ This example uses a callback pattern to create the classifier
 
 // Initialize the Image Classifier method with MobileNet. A callback needs to be passed.
 let classifier;
-let imgeModelURL = './my-model/'; // //'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
-//let imgeModelURL = 'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
+//let imgeModelURL = './my-model/'; // //'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
+let imgeModelURL = 'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
 
 // A variable to hold the image we want to classify
 let img;
