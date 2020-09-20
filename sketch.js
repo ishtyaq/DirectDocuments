@@ -16,8 +16,9 @@ let imgeModelURL = 'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
 
 // A variable to hold the image we want to classify
 let img;
-
+var dropzone ; // document.getElementById('dropzone');
 function preload() {
+  dropzone = select('#dropzone');
   $('.progress-bar').show();
   // classifier = ml5.imageClassifier('MobileNet',modelLoaded);
   //classifier = ml5.imageClassifier(imgeModelURL + 'model.json');
@@ -33,28 +34,58 @@ function imageReady(){
 }
 // When the model is loaded
 function modelLoaded() {
+  
     console.log('Model Loaded!');
   }
-  var dropzone;
+  //var dropzone;
 function setup() {
   createCanvas(640, 480);
   // image(img, 0, 0, width, height);
   //$("#selected-image").attr("src",'images/images.jpeg');
   
-  dropzone = select('#dropzone');
-  dropzone.dragOver(highlight);
-  dropzone.dragLeave(unhighlight);
-  dropzone.drop(gotFile,unhighlight);
+  //dropzone = select('#dropzone');
+ // dropzone.dragOver(highlight);
+ // dropzone.dragLeave(unhighlight);
+ // dropzone.drop(gotFile,unhighlight);
   // background(0);
 }
-function gotFile(file)
+
+function preventDefaults(e) {
+  e.preventDefault()
+  e.stopPropagation()
+};
+['dragenter', 'dragover'].forEach(eventName => {
+  dropzone.addEventListener(eventName, e => dropContainer.classList.add('highlight'), false)
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+  dropzone.addEventListener(eventName, e => dropContainer.classList.remove('highlight'), false)
+});
+
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  dropzone.addEventListener(eventName, preventDefaults, false)
+});
+
+dropzone.addEventListener('drop', gotFile, false);
+
+function gotFile(e)
 {
+  const dt = e.dataTransfer;
+  console.log(dt);
   // createP(file.name);
   // createP(file.type);
   // createP(file.size);
   // img = createImg(file.data, file.name);
-  img = loadImage(file.data);
-  $("#selected-image").attr("src", file.data);
+  fileData = e.data;
+  console.log(file);
+  img = loadImage(fileData);
+  $("#selected-image").attr("src", e.data);
+  //console.log($("#image-selector").prop('files')[0]);
+}
+
+function dropHandler(event){
+  event.preventDefault();
+  console.log(event);
 }
 function highlight(){
   dropzone.style('background-color','#ccc');
@@ -81,6 +112,11 @@ function gotResult(error, results) {
 //  createDiv('Confidence: ' + nf(results[0].confidence, 0, 2));
 }
 let imageLoaded;
+let fileData;
+function onChange(e){
+  console.log(e);
+
+}
 $("#image-selector").change(function () {
   alert('here');
   imageLoaded = false;
@@ -94,8 +130,8 @@ $("#image-selector").change(function () {
 	}
 	
     //let file = imageSelector.prop('files')[0]; 
-    let file = $("#image-selector").prop('files')[0];
-	reader.readAsDataURL(file);
+    fileData = $("#image-selector").prop('files')[0];
+	reader.readAsDataURL(fileData);
 });
 
 function predictResult(){
@@ -103,5 +139,77 @@ function predictResult(){
   console.log('starting processing');
   $("#prediction-list").empty();
   classifier.classify(img, gotResult);
+  // strt OCR process
+  startOCR(fileData);
   $('.progress-bar').hide();
 };
+
+function startOCR(fileToUpload)
+{
+    console.log('startOCR');
+    //Prepare form data
+    var formData = new FormData();
+    formData.append("file", fileToUpload);
+  //  formData.append("url", "URL-of-Image-or-PDF-file");
+    formData.append("language", "eng");
+    formData.append("apikey", "af3ece4fef88957");
+    formData.append("isOverlayRequired", false);
+    formData.append("OCREngine", 2);
+    console.log('starting ocr process');
+    //Send OCR Parsing request asynchronously
+    jQuery.ajax({
+        url: 'https://api.ocr.space/parse/image',
+        data: formData,
+        dataType: 'json',
+        cache: false,
+        contentType: false,
+        processData: false,
+        type: 'POST',
+        success: function (ocrParsedResult) {
+            console.log('success');
+            //Get the parsed results, exit code and error message and details
+            var parsedResults = ocrParsedResult["ParsedResults"];
+            var ocrExitCode = ocrParsedResult["OCRExitCode"];
+            var isErroredOnProcessing = ocrParsedResult["IsErroredOnProcessing"];
+            var errorMessage = ocrParsedResult["ErrorMessage"];
+            var errorDetails = ocrParsedResult["ErrorDetails"];
+            var processingTimeInMilliseconds = ocrParsedResult["ProcessingTimeInMilliseconds"];
+            //If we have got parsed results, then loop over the results to do something
+            if (errorMessage) {
+                console.log(errorMessage);
+                console.log(errorDetails);
+            }
+                
+
+            if (parsedResults != null)
+            {
+                console.log(parsedResults);
+                //Loop through the parsed results
+                $.each(parsedResults, function (index, value)
+                {
+                    var exitCode = value["FileParseExitCode"];
+                    var parsedText = value["ParsedText"];
+                    var errorMessage = value["ParsedTextFileName"];
+                    var errorDetails = value["ErrorDetails"];
+
+                    var textOverlay = value["TextOverlay"];
+                    var pageText = '';
+                    console.log(parsedText);
+                    // $("#result-list").append(parsedText);
+                    $("#prediction-list").append(parsedText);
+                });
+            }
+        }
+        ,
+        failure: function (response) {
+             
+            console.log(response);
+            
+        },
+        error: function (response) {
+            
+            console.log(response);
+            
+        }
+    });
+}
