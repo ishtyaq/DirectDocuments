@@ -67,17 +67,18 @@
 					<div class="progress progress-bar progress-bar-striped progress-bar-animated mb-2">Loading Model</div>
 				</div>
 			</div>
-			<div class="row">
+			<div class="row" style=" padding: 24px;">
 				<div class="col-6">
-          <div id="dropzone" ondrop="dropHandler(event);">
+          <!-- <div id="dropzone" ondrop="dropHandler(event);">
               Drag your file here
 		  </div>
 		  <div id="testDiv" ondrop="dropHandler(event);">
 				herer as well
 		  </div>
-					<input id="image-selector" =class="form-control border-0" type="file"> 
+					  -->
 
 				<!-- 	<input id="file-selector" name="file-selector" type="file" onclick="this.value = null" onchange="onChange(this)" style="width:80%"/> -->
+				<input id="image-selector" =class="form-control border-0" type="file">
 
 				</div>
 				<div class="col-6">
@@ -87,11 +88,11 @@
 			<hr>
 			<div class="row">
 				<div class="col-6">
-					<h2 class="ml-3">Image</h2>
+					<h2 class="ml-3">Image Preview</h2>
 					<img id="selected-image" class="ml-3" width="250" alt=""> 
 				</div>
 				<div class="col-6">
-					<h2 class="ml-3">Predictions</h2>
+					<h2 class="ml-3">Predictions/ Result</h2>
 					<ol id="prediction-list"></ol>
 				</div>
       </div>

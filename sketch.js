@@ -11,8 +11,8 @@ This example uses a callback pattern to create the classifier
 
 // Initialize the Image Classifier method with MobileNet. A callback needs to be passed.
 let classifier;
-//let imgeModelURL = './my-model/'; // //'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
-let imgeModelURL = 'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
+let imgeModelURL = './my-model/'; // //'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
+//let imgeModelURL = 'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
 
 // A variable to hold the image we want to classify
 let img;
@@ -44,9 +44,9 @@ function setup() {
   //$("#selected-image").attr("src",'images/images.jpeg');
   
   //dropzone = select('#dropzone');
- // dropzone.dragOver(highlight);
- // dropzone.dragLeave(unhighlight);
- // dropzone.drop(gotFile,unhighlight);
+  // dropzone.dragOver(highlight);
+  // dropzone.dragLeave(unhighlight);
+  // dropzone.drop(gotFile,unhighlight);
   // background(0);
 }
 
@@ -54,19 +54,19 @@ function preventDefaults(e) {
   e.preventDefault()
   e.stopPropagation()
 };
-['dragenter', 'dragover'].forEach(eventName => {
-  dropzone.addEventListener(eventName, e => dropContainer.classList.add('highlight'), false)
-});
+// ['dragenter', 'dragover'].forEach(eventName => {
+//   dropzone.addEventListener(eventName, e => dropContainer.classList.add('highlight'), false)
+// });
 
-['dragleave', 'drop'].forEach(eventName => {
-  dropzone.addEventListener(eventName, e => dropContainer.classList.remove('highlight'), false)
-});
+// ['dragleave', 'drop'].forEach(eventName => {
+//   dropzone.addEventListener(eventName, e => dropContainer.classList.remove('highlight'), false)
+// });
 
-['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-  dropzone.addEventListener(eventName, preventDefaults, false)
-});
+// ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+//   dropzone.addEventListener(eventName, preventDefaults, false)
+// });
 
-dropzone.addEventListener('drop', gotFile, false);
+// dropzone.addEventListener('drop', gotFile, false);
 
 function gotFile(e)
 {
@@ -106,8 +106,8 @@ function gotResult(error, results) {
   // fill(0);
   // textSize(64);
   // text(label,10,height-100);
-  $("#prediction-list").append('Label: ' + label);
-  $("#prediction-list").append('\nConfidence: ' + nf(results[0].confidence, 0, 2));
+  $("#prediction-list").append('<li> <b>Document Type:</b> ' + label);
+  $("#prediction-list").append('\nConfidence: ' + nf(results[0].confidence, 0, 2) + '</li>');
 //  createDiv('Label: ' + label);
 //  createDiv('Confidence: ' + nf(results[0].confidence, 0, 2));
 }
@@ -117,22 +117,34 @@ function onChange(e){
   console.log(e);
 
 }
-$("#image-selector").change(function () {
-  alert('here');
-  imageLoaded = false;
-  console.log('change image');
-	let reader = new FileReader();
-	reader.onload = function () {
-		let dataURL = reader.result;
-		$("#selected-image").attr("src", dataURL);
-		$("#prediction-list").empty();
-		imageLoaded = true;
-	}
-	
-    //let file = imageSelector.prop('files')[0]; 
-    fileData = $("#image-selector").prop('files')[0];
-	reader.readAsDataURL(fileData);
+$(document).ready(function () {
+  $("#image-selector").change(function (em) {
+   // alert('here');
+    imageLoaded = false;
+    //console.log(em);
+    let reader = new FileReader();
+    reader.onload = function (e) {
+      console.log(e);
+      let dataURL = e.target.result;
+      $("#selected-image").attr("src", dataURL);
+      
+      $("#prediction-list").empty();
+      imageLoaded = true;
+      console.log(reader);
+     
+      
+    }
+   
+      //let file = imageSelector.prop('files')[0]; 
+      fileData = em.target.files[0]; // $("#image-selector").prop('files')[0];
+      reader.readAsDataURL(fileData);
+      img = loadImage(reader.result);
+     // classifier.classify(img, gotResult);
+     //  img = loadImage(reader.readAsDataURL(fileData));
+      console.log(img);
+  });
 });
+
 
 function predictResult(){
   $('.progress-bar').show();
@@ -196,7 +208,7 @@ function startOCR(fileToUpload)
                     var pageText = '';
                     console.log(parsedText);
                     // $("#result-list").append(parsedText);
-                    $("#prediction-list").append(parsedText);
+                    $("#prediction-list").append('<li><b>Text:</b>' + parsedText + '</li>');
                 });
             }
         }
