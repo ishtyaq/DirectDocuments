@@ -11,19 +11,19 @@ This example uses a callback pattern to create the classifier
 
 // Initialize the Image Classifier method with MobileNet. A callback needs to be passed.
 let classifier;
-let imgeModelURL = './my-model/'; // //'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
+//let imgeModelURL = './my-model/'; // //'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
 //let imgeModelURL = 'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
-
+let imgeModelURL = 'https://teachablemachine.withgoogle.com/models/dfNBM-C8y/';
 // A variable to hold the image we want to classify
 let img;
 var dropzone ; // document.getElementById('dropzone');
 function preload() {
   dropzone = select('#dropzone');
-  $('.progress-bar').show();
+  $('#progressbar').show();
   // classifier = ml5.imageClassifier('MobileNet',modelLoaded);
   //classifier = ml5.imageClassifier(imgeModelURL + 'model.json');
   classifier = ml5.imageClassifier(imgeModelURL + 'model.json', modelLoaded);
-  $('.progress-bar').hide();
+  $('#progressbar').hide();
   //img = loadImage('images/images.jpeg', imageReady);
 }
 function imageReady(){
@@ -43,10 +43,10 @@ function setup() {
   // image(img, 0, 0, width, height);
   //$("#selected-image").attr("src",'images/images.jpeg');
   
-  //dropzone = select('#dropzone');
-  // dropzone.dragOver(highlight);
-  // dropzone.dragLeave(unhighlight);
-  // dropzone.drop(gotFile,unhighlight);
+  dropzone = select('#dropzone');
+  dropzone.dragOver(highlight);
+  dropzone.dragLeave(unhighlight);
+  dropzone.drop(gotFile,unhighlight);
   // background(0);
 }
 
@@ -70,16 +70,17 @@ function preventDefaults(e) {
 
 function gotFile(e)
 {
-  const dt = e.dataTransfer;
-  console.log(dt);
+  // const dt = e.dataTransfer;
+  // console.log(dt);
   // createP(file.name);
   // createP(file.type);
   // createP(file.size);
   // img = createImg(file.data, file.name);
   fileData = e.data;
-  console.log(file);
+ // console.log(file);
   img = loadImage(fileData);
-  $("#selected-image").attr("src", e.data);
+  $("#selected-image1").attr("src", e.data);
+  classifier.classify(img, gotResult);
   //console.log($("#image-selector").prop('files')[0]);
 }
 
@@ -99,6 +100,7 @@ function gotResult(error, results) {
   // Display error in the console
   if (error) {
     console.error(error);
+    $("#prediction-list1").append('<li> <b>Error:</b> ' + error);
   }
   // The results are in an array ordered by confidence.
   console.log(results);
@@ -106,8 +108,9 @@ function gotResult(error, results) {
   // fill(0);
   // textSize(64);
   // text(label,10,height-100);
-  $("#prediction-list").append('<li> <b>Document Type:</b> ' + label);
-  $("#prediction-list").append('\nConfidence: ' + nf(results[0].confidence, 0, 2) + '</li>');
+  $("#prediction-list1").empty();
+  $("#prediction-list1").append('<li> <b>Document Type:</b> ' + label);
+  $("#prediction-list1").append('\nConfidence: ' + nf(results[0].confidence, 0, 2) + '</li>');
 //  createDiv('Label: ' + label);
 //  createDiv('Confidence: ' + nf(results[0].confidence, 0, 2));
 }
@@ -138,22 +141,23 @@ $(document).ready(function () {
       //let file = imageSelector.prop('files')[0]; 
       fileData = em.target.files[0]; // $("#image-selector").prop('files')[0];
       reader.readAsDataURL(fileData);
-      img = loadImage(reader.result);
+    //   img = loadImage(reader.result);
      // classifier.classify(img, gotResult);
      //  img = loadImage(reader.readAsDataURL(fileData));
+     startOCR(fileData);
       console.log(img);
   });
 });
 
 
 function predictResult(){
-  $('.progress-bar').show();
+  $('#progressbar').show();
   console.log('starting processing');
   $("#prediction-list").empty();
-  classifier.classify(img, gotResult);
+  //classifier.classify(img, gotResult);
   // strt OCR process
   startOCR(fileData);
-  $('.progress-bar').hide();
+  $('#progressbar').hide();
 };
 
 function startOCR(fileToUpload)
@@ -188,14 +192,15 @@ function startOCR(fileToUpload)
             var processingTimeInMilliseconds = ocrParsedResult["ProcessingTimeInMilliseconds"];
             //If we have got parsed results, then loop over the results to do something
             if (errorMessage) {
+              $("#prediction-list").append('<li><b>Validation:</b>' + errorMessage + '</li>');
                 console.log(errorMessage);
-                console.log(errorDetails);
+               //  console.log(errorDetails);
             }
                 
 
             if (parsedResults != null)
             {
-                console.log(parsedResults);
+                console.log('Result' + parsedResults);
                 //Loop through the parsed results
                 $.each(parsedResults, function (index, value)
                 {
@@ -214,13 +219,15 @@ function startOCR(fileToUpload)
         }
         ,
         failure: function (response) {
-             
-            console.log(response);
-            
+            // console.log(response);
+            //console.log('F' + response[0]);
+            $("#prediction-list").append('<li><b>Failure:</b>' + response + '</li>');
+
         },
         error: function (response) {
-            
-            console.log(response);
+         // console.log(response);
+         // console.log('E' + response[0]);
+          $("#prediction-list").append('<li><b>Error:</b>' + response + '</li>');
             
         }
     });

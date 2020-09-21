@@ -64,35 +64,49 @@
 		<main role="main" class="container mt-5">
 			<div class="row">
 				<div class="col-12">
-					<div class="progress progress-bar progress-bar-striped progress-bar-animated mb-2">Loading Model</div>
+					<div id="progressbar" class="progress progress-bar progress-bar-striped progress-bar-animated mb-2">Loading Model</div>
 				</div>
 			</div>
+			<h1>Document Type</h1>
 			<div class="row" style=" padding: 24px;">
-				<div class="col-6">
-          <!-- <div id="dropzone" ondrop="dropHandler(event);">
-              Drag your file here
-		  </div>
-		  <div id="testDiv" ondrop="dropHandler(event);">
+				<div class="col-4">
+          
+		<!--  <div id="testDiv" ondrop="dropHandler(event);">
 				herer as well
 		  </div>
 					  -->
 
 				<!-- 	<input id="file-selector" name="file-selector" type="file" onclick="this.value = null" onchange="onChange(this)" style="width:80%"/> -->
-				<input id="image-selector" =class="form-control border-0" type="file">
-
+				<div id="dropzone" ondrop="dropHandler(event);">
+					Drag your file here
 				</div>
-				<div class="col-6">
+			</div>
+				<div class="col-5">
+					<h2 class="ml-3">Image Preview</h2>
+					<img id="selected-image1" class="ml-3" width="250" alt=""> 
+				</div>
+				
+				<!-- <div class="col-6">
 					<button id="predict-button" onclick="predictResult()" class="btn btn-primary ">Predict</button>
+				</div> -->
+				<div class="col-3">
+					<h3 class="ml-3">Predictions</h3>
+					<ol id="prediction-list1"></ol>
 				</div>
 			</div>
 			<hr>
+			<h1>OCR</h1>
 			<div class="row">
-				<div class="col-6">
+				<div class="col-4">
+					<input id="image-selector" =class="form-control border-0" type="file">
+				
+				</div>
+				<div class="col-5">
 					<h2 class="ml-3">Image Preview</h2>
 					<img id="selected-image" class="ml-3" width="250" alt=""> 
 				</div>
-				<div class="col-6">
-					<h2 class="ml-3">Predictions/ Result</h2>
+				<div class="col-3">
+					<h4 class="ml-3">Text Result</h4>
 					<ol id="prediction-list"></ol>
 				</div>
       </div>
