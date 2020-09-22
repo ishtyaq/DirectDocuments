@@ -11,6 +11,7 @@ This example uses a callback pattern to create the classifier
 
 // Initialize the Image Classifier method with MobileNet. A callback needs to be passed.
 let classifier;
+let coco;
 //let imgeModelURL = './my-model/'; // //'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
 //let imgeModelURL = 'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
 let imgeModelURL = 'https://teachablemachine.withgoogle.com/models/dfNBM-C8y/';
@@ -20,11 +21,15 @@ var dropzone ; // document.getElementById('dropzone');
 function preload() {
   dropzone = select('#dropzone');
   $('#progressbar').show();
-  // classifier = ml5.imageClassifier('MobileNet',modelLoaded);
+  //classifier1 = ml5.imageClassifier("MobileNet",modelLoaded);
+  cocoSsd = ml5.objectDetector('cocossd', modelReady);
   //classifier = ml5.imageClassifier(imgeModelURL + 'model.json');
   classifier = ml5.imageClassifier(imgeModelURL + 'model.json', modelLoaded);
   $('#progressbar').hide();
   //img = loadImage('images/images.jpeg', imageReady);
+}
+function modelReady(){
+  console.log('coco loaded');
 }
 function imageReady(){
     console.log('image loaded');
@@ -80,7 +85,12 @@ function gotFile(e)
  // console.log(file);
   img = loadImage(fileData);
   $("#selected-image1").attr("src", e.data);
-  classifier.classify(img, gotResult);
+  $("#prediction-list1").empty();
+
+  cocoSsd.detect(img, gotResult);
+  classifier.predict(img, gotResult);
+  //classifier1.predict(img, gotResult);
+  img = null;
   //console.log($("#image-selector").prop('files')[0]);
 }
 
@@ -104,11 +114,13 @@ function gotResult(error, results) {
   }
   // The results are in an array ordered by confidence.
   console.log(results);
+  if(results.length <=0)
+    return;
   let label = results[0].label;
   // fill(0);
   // textSize(64);
   // text(label,10,height-100);
-  $("#prediction-list1").empty();
+  
   $("#prediction-list1").append('<li> <b>Document Type:</b> ' + label);
   $("#prediction-list1").append('\nConfidence: ' + nf(results[0].confidence, 0, 2) + '</li>');
 //  createDiv('Label: ' + label);
