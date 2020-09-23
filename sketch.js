@@ -15,21 +15,29 @@ let coco;
 //let imgeModelURL = './my-model/'; // //'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
 //let imgeModelURL = 'https://teachablemachine.withgoogle.com/models/gZ_Es72pk/';
 let imgeModelURL = 'https://teachablemachine.withgoogle.com/models/dfNBM-C8y/';
+
 // A variable to hold the image we want to classify
 let img;
 var dropzone ; // document.getElementById('dropzone');
+let objects;
+let imageLoaded;
+let fileData;
+let status;
 function preload() {
+   
   dropzone = select('#dropzone');
   $('#progressbar').show();
+ // $('.progress-bar').show();
   //classifier1 = ml5.imageClassifier("MobileNet",modelLoaded);
-  cocoSsd = ml5.objectDetector('cocossd', modelReady);
+ 
   //classifier = ml5.imageClassifier(imgeModelURL + 'model.json');
   classifier = ml5.imageClassifier(imgeModelURL + 'model.json', modelLoaded);
-  $('#progressbar').hide();
+//  $('#progressbar').hide();
   //img = loadImage('images/images.jpeg', imageReady);
 }
 function modelReady(){
   console.log('coco loaded');
+  $('#progressbar').hide();
 }
 function imageReady(){
     console.log('image loaded');
@@ -41,6 +49,7 @@ function imageReady(){
 function modelLoaded() {
   
     console.log('Model Loaded!');
+    
   }
   //var dropzone;
 function setup() {
@@ -53,6 +62,7 @@ function setup() {
   dropzone.dragLeave(unhighlight);
   dropzone.drop(gotFile,unhighlight);
   // background(0);
+  cocoSsd = ml5.objectDetector('cocossd', modelReady);
 }
 
 function preventDefaults(e) {
@@ -87,17 +97,18 @@ function gotFile(e)
   $("#selected-image1").attr("src", e.data);
   $("#prediction-list1").empty();
 
-  cocoSsd.detect(img, gotResult);
+  cocoSsd.detect(img,  gotObjectResult);
+  console.log(cocoSsd.isPredicting);
   classifier.predict(img, gotResult);
   //classifier1.predict(img, gotResult);
   img = null;
   //console.log($("#image-selector").prop('files')[0]);
 }
 
-function dropHandler(event){
-  event.preventDefault();
-  console.log(event);
-}
+// function dropHandler(event){
+//   event.preventDefault();
+//   console.log(event);
+// }
 function highlight(){
   dropzone.style('background-color','#ccc');
 }
@@ -126,8 +137,31 @@ function gotResult(error, results) {
 //  createDiv('Label: ' + label);
 //  createDiv('Confidence: ' + nf(results[0].confidence, 0, 2));
 }
-let imageLoaded;
-let fileData;
+// A function to run when we get any errors and the results
+function gotObjectResult(error, results) {
+  // Display error in the console
+  if (error) {
+    console.error(error);
+    $("#prediction-list1").append('<li> <b>Error:</b> ' + error);
+  }
+  // The results are in an array ordered by confidence.
+  console.log(results);
+  if(results.length <=0)
+    return;
+  
+  status=true;
+  let label = results[0].label;
+  // fill(0);
+  // textSize(64);
+  // text(label,10,height-100);
+  
+  $("#prediction-list1").append('<li> <b>Object Type:</b> ' + label);
+  $("#prediction-list1").append('\nConfidence: ' + nf(results[0].confidence, 0, 2) + '</li>');
+  objects = results;
+//  createDiv('Label: ' + label);
+//  createDiv('Confidence: ' + nf(results[0].confidence, 0, 2));
+}
+
 function onChange(e){
   console.log(e);
 
@@ -244,3 +278,4 @@ function startOCR(fileToUpload)
         }
     });
 }
+ 
