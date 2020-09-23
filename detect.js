@@ -8,7 +8,7 @@ async function app() {
   console.log('Loading mobilenet..');
 
   // Load the model.
-  net = await mobilenet.load();
+ // net = await mobilenet.load();
     console.log('Successfully loaded model');
   $('#prediction-list').append('Model Loaded');
 
@@ -70,31 +70,50 @@ $(document).ready(function () {
 async function predict() {
     console.log('inside predict');
     // predict can take in an image, video or canvas html element
+    
     const prediction = await model.predict(document.getElementById('selected-image'));
-    if(prediction.length>0){
-      firstResult = prediction[0];
-      // $("#prediction-list").append('<li> <b>Document Type:</b> ' + prediction[0].className);
-      // $("#prediction-list").append('\nConfidence: ' + prediction[0].probability + '</li>');
-    }
-    else{
-      $("#prediction-list").append('No result found.');
-    }
-    // for (let i = 0; i < maxPredictions; i++) {
-    //     const classPrediction =
-    //         prediction[i].className + ": " + prediction[i].probability.toFixed(2);
-    //    // labelContainer.childNodes[i].innerHTML = classPrediction;
-       
-      
+    // if(prediction.length>0){
+    //  // firstResult = prediction[0];
+    //   $("#prediction-list").append('<li> <b>Document Type:</b> ' + prediction[0].className);
+    //   $("#prediction-list").append('\nConfidence: ' + prediction[0].probability + '</li>');
     // }
+    // else{
+    //   $("#prediction-list").append('No result found.');
+    // }
+    console.log(prediction);
+    let matched;
+    let index;
+    for (let i = 0; i < maxPredictions; i++) {
+      if(i==0){
+        index=0;
+        matched = prediction[i].probability;
+      }
+      else if(matched < prediction[i].probability ){
+        matched = prediction[i].probability;
+        index = i;
+      }
+      
+        
+      
+      //   const classPrediction =
+      //       prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+      //  // labelContainer.childNodes[i].innerHTML = classPrediction;
+      //  $("#prediction-list").append(classPrediction);
+      
+    }
+    $("#prediction-list").append('<li> <b>Document Type:</b> ' + prediction[index].className);
+    $("#prediction-list").append('\nConfidence: ' + prediction[index].probability.toFixed(2) + '</li>');
+    $('#progressbar').hide();
 }
 async function startProcess(){
   $('#progressbar').show();
-  startOCR(fileData);
+ 
   console.log('Start..');
   //$("#prediction-list").empty();
   predict();
-  console.log(firstResult);
-  startDetection();
+  startOCR(fileData);
+  //console.log(firstResult);
+  //startDetection();
  
   console.log('End..');
  
