@@ -4,6 +4,7 @@ let model,  labelContainer, maxPredictions;
 let fileData;
 let firstResult;
 async function app() {
+  $('#progressbar').show();
   console.log('Loading mobilenet..');
 
   // Load the model.
@@ -30,7 +31,7 @@ async function app() {
   //   $("#prediction-list").append('<li> <b>Document Type:</b> ' + results[0].className);
   //   $("#prediction-list").append('\nConfidence: ' + results[0].probability + '</li>');
   // }
-  
+  $('#progressbar').hide();
   //console.log(result);
 }
 
@@ -87,6 +88,7 @@ async function predict() {
     // }
 }
 async function startProcess(){
+  $('#progressbar').show();
   startOCR(fileData);
   console.log('Start..');
   //$("#prediction-list").empty();
@@ -123,7 +125,7 @@ async function startDetection()
     }
    
   }
-
+  $('#progressbar').hide();
   console.log('process ended');
 
  
