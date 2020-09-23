@@ -98,10 +98,20 @@ function gotFile(e)
   $("#prediction-list1").empty();
 
   cocoSsd.detect(img,  gotObjectResult);
+
+
+
   console.log(cocoSsd.isPredicting);
   classifier.predict(img, gotResult);
   //classifier1.predict(img, gotResult);
-  img = null;
+  ml5
+  .imageClassifier('MobileNet')
+  .then(classifier => classifier.predict(img))
+  .then((results) => {
+    // Do something with the results
+    $("#prediction-list1").append('<li> <b>Document Type:</b> ' + results[0].label);
+    $("#prediction-list1").append('\nConfidence: ' + nf(results[0].confidence, 0, 2) + '</li>');
+  });
   //console.log($("#image-selector").prop('files')[0]);
 }
 
